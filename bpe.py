@@ -28,25 +28,32 @@ class BPETokenizer:
                 i += 1
 
         return new_ids
+    
+
 
 
 def main():
     """
-    Testing out the get_stats function
+    Testing out the merge function
     """
 
     text = "The Tokenizer is a necessary and pervasive component of Large Language Models (LLMs), where it translates between strings and tokens (text chunks). Tokenizers are a completely separate stage of the LLM pipeline: they have their own training sets, training algorithms (Byte Pair Encoding), and after training implement two fundamental functions: encode() from strings to tokens, and decode() back from tokens to strings. In this lecture we build from scratch the Tokenizer used in the GPT series from OpenAI. In the process, we will see that a lot of weird behaviors and problems of LLMs actually trace back to tokenization. We'll go through a number of these issues, discuss why tokenization is at fault, and why someone out there ideally finds a way to delete this stage entirely."
     ids = text.encode()
-    stats = BPETokenizer().get_stats(ids)
-
-    for count, pair in sorted(((v, k) for k, v in stats.items()), reverse=True)[:10]:
-        print(count, chr(pair[0]), chr(pair[1]))
-
-    top_pair = max(stats, key=stats.get)
-
-    new_ids = BPETokenizer().merge(ids, top_pair, 256)
+    tokenizer = BPETokenizer()
     print(f"{len(ids)=}")
-    print(f"{len(new_ids)=}")
+    
+    vocab_size = 275
+    n_iterations = vocab_size - 256
+
+    merged = {}
+    new_ids = list(ids)
+    for _ in range(n_iterations):
+        stats = tokenizer.get_stats(new_ids)
+        top_pair = max(stats, key=stats.get)
+        new_ids = tokenizer.merge(new_ids, top_pair, 256)
+        print(f"{len(new_ids)=}")
+
+    print("Compression:", len(new_ids)/len(ids))
 
 
 
