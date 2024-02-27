@@ -40,7 +40,16 @@ class BPETokenizer:
             self.merged[top_pair] = idx
 
         print("Compression ratio:", len(ids)/len(new_ids))
+        return new_ids
 
+    def decode(self, ids):
+        self.vocab = {idx: bytes([idx]) for idx in range(256)}
+        for (p0, p1), idx in self.merged.items():
+            self.vocab[idx] = self.vocab[p0] + self.vocab[p1]
+
+        tokens = b"".join(self.vocab[idx] for idx in ids)
+        text = tokens.decode("utf-8", errors="replace")
+        return text
 
 def main():
     """
@@ -50,7 +59,9 @@ def main():
     text = "The Tokenizer is a necessary and pervasive component of Large Language Models (LLMs), where it translates between strings and tokens (text chunks). Tokenizers are a completely separate stage of the LLM pipeline: they have their own training sets, training algorithms (Byte Pair Encoding), and after training implement two fundamental functions: encode() from strings to tokens, and decode() back from tokens to strings. In this lecture we build from scratch the Tokenizer used in the GPT series from OpenAI. In the process, we will see that a lot of weird behaviors and problems of LLMs actually trace back to tokenization. We'll go through a number of these issues, discuss why tokenization is at fault, and why someone out there ideally finds a way to delete this stage entirely."
     ids = text.encode()
     tokenizer = BPETokenizer()
-    tokenizer.train(ids)
+    new_ids = tokenizer.train(ids)
+
+    print(tokenizer.decode(new_ids))
     
 
 
