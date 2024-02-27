@@ -1,4 +1,4 @@
-class Tokenizer:
+class charTokenizer:
     """
     The simplest character based tokenizer
     """
