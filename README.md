@@ -25,3 +25,8 @@ With this tokenizer, each character in the text will correspond to an integer. T
 ## Byte pair encoding
 
 Algorithm: iteratively replace the most common contiguous sequences of characters in a target piece of text with unused 'placeholder' bytes.
+
+## Considerations
+### Vocabulary size
+
+The number of parameters on a transformer model is dependent on the vocabulary size. So higher vocab_size will mean more parameters. Specifically, in the embedding table and the head linear layer at the end of the decoder.
